@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model FireDetection {
+  id          String   @id @default(cuid())
+  latitude    Float
+  longitude   Float
+  confidence  Float
+  brightness  Float
+  scan        Float
+  track       Float
+  acq_date    String
+  acq_time    String
+  satellite   String
+  instrument  String
+  version     String
+  bright_t31  Float
+  frp         Float
+  daynight    String
+  type        Int
+  source      String   // Changed from FireSource enum to String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@index([latitude, longitude])
+  @@index([acq_date, acq_time])
+  @@index([source])
+  @@map("fire_detections")
+}
+
+model UserReportedFire {
+  id               String    @id @default(cuid())
+  latitude         Float
+  longitude        Float
+  intensity        String    // Changed from Intensity enum to String
+  smoke_visibility Boolean
+  estimated_area   Float
+  description      String?
+  photos           String?   // Changed from String[] to String (JSON string)
+  reporter_name    String?
+  reporter_contact String?
+  verified         Boolean   @default(false)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  @@index([latitude, longitude])
+  @@index([created_at])
+  @@map("user_reported_fires")
+}
+
+model FirePrediction {
+  id                String   @id @default(cuid())
+  grid_lat          Float
+  grid_lng          Float
+  probability       Float
+  confidence        Float
+  prediction_date   String
+  prediction_horizon Int
+  model_version     String
+  features          String  // Changed from Json to String (JSON string)
+  created_at        DateTime @default(now())
+
+  @@index([grid_lat, grid_lng])
+  @@index([prediction_date])
+  @@map("fire_predictions")
+}
+
+model WeatherData {
+  id           String   @id @default(cuid())
+  latitude     Float
+  longitude    Float
+  date         String
+  temperature  Float
+  humidity     Float
+  wind_speed   Float
+  wind_direction Float
+  precipitation Float
+  created_at   DateTime @default(now())
+
+  @@index([latitude, longitude, date])
+  @@map("weather_data")
+}
+
+// Removed enums as SQLite doesn't support them
+// FireSource: "MODIS" | "VIIRS" | "OTHER"
+// Intensity: "LOW" | "MEDIUM" | "HIGH"

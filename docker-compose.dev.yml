@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:/app/data/dev.db
+      - NASA_FIRMS_API_KEY=${NASA_FIRMS_API_KEY:-your_nasa_firms_api_key_here}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - sqlite_data:/app/data
+      - uploads_data:/app/uploads
+    restart: unless-stopped
+    command: npm run dev
+
+volumes:
+  sqlite_data:
+    driver: local
+  uploads_data:
+    driver: local

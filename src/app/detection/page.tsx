@@ -6,6 +6,7 @@ import { FireDetection, UserReportedFire, FilterOptions, MapBounds } from '@/typ
 import { FilterPanel } from '@/components/Detection/FilterPanel'
 import { FireStats } from '@/components/Detection/FireStats'
 import { ExportButton } from '@/components/Detection/ExportButton'
+import FireList from '@/components/Map/FireList'
 import { REGIONS } from '@/lib/constants'
 
 const MapWrapper = dynamic(
@@ -154,27 +155,35 @@ export default function FireDetectionPage() {
           />
         </div>
 
-        {/* Map */}
-        <div className="flex-1 relative">
-          {loading && (
-            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
-              <div className="flex items-center gap-3">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-fire-red"></div>
-                <span className="text-gray-600">Loading fire data...</span>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Map */}
+          <div className="flex-1 relative">
+            {loading && (
+              <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-fire-red"></div>
+                  <span className="text-gray-600">Loading fire data...</span>
+                </div>
               </div>
-            </div>
-          )}
-          
-          <MapWrapper
-            fires={fires}
-            userReportedFires={userReportedFires}
-            onBoundsChange={setMapBounds}
-            onFireReport={handleFireReport}
-            filters={{
-              sources: filters.sources,
-              confidenceThreshold: filters.confidenceThreshold
-            }}
-          />
+            )}
+            
+            <MapWrapper
+              fires={fires}
+              userReportedFires={userReportedFires}
+              onBoundsChange={setMapBounds}
+              onFireReport={handleFireReport}
+              filters={{
+                sources: filters.sources,
+                confidenceThreshold: filters.confidenceThreshold
+              }}
+            />
+          </div>
+
+          {/* Fire List */}
+          <div className="h-80 border-t border-gray-200 p-4 bg-gray-50">
+            <FireList />
+          </div>
         </div>
       </div>
     </div>

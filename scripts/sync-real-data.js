@@ -39,10 +39,6 @@ async function fetchFireData(source, area, days = 7) {
       }
     })
 
-    console.log(`Response status: ${response.status}, Data length: ${response.data.length}`)
-    if (response.data.length < 100) {
-      console.log(`Raw response: ${response.data}`)
-    }
 
     return parseCSVData(response.data, source)
   } catch (error) {
@@ -57,10 +53,8 @@ async function fetchFireData(source, area, days = 7) {
 
 function parseCSVData(csvData, source) {
   const lines = csvData.trim().split('\n')
-  console.log(`Parsing ${lines.length} lines of data`)
   
   if (lines.length <= 1) {
-    console.log('No data lines found after header')
     return []
   }
 
@@ -69,29 +63,52 @@ function parseCSVData(csvData, source) {
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(',')
     if (values.length < 14) {
-      console.log(`Skipping line ${i}: only ${values.length} values`)
       continue
     }
 
     try {
-      const fire = {
-        latitude: parseFloat(values[0]),
-        longitude: parseFloat(values[1]),
-        brightness: parseFloat(values[2]),
-        scan: parseFloat(values[3]),
-        track: parseFloat(values[4]),
-        acq_date: values[5],
-        acq_time: values[6],
-        satellite: values[7],
-        instrument: values[8],
-        confidence: parseFloat(values[9]),
-        version: values[10],
-        bright_t31: parseFloat(values[11]) || 0,
-        frp: parseFloat(values[12]),
-        daynight: values[13],
-        type: parseInt(values[14]) || 0,
-        source: mapSourceName(source)
+      let fire
+      if (source === 'MODIS') {
+        fire = {
+          latitude: parseFloat(values[0]),
+          longitude: parseFloat(values[1]),
+          brightness: parseFloat(values[2]),
+          scan: parseFloat(values[3]),
+          track: parseFloat(values[4]),
+          acq_date: values[5],
+          acq_time: values[6],
+          satellite: values[7],
+          instrument: values[8],
+          confidence: parseFloat(values[9]),
+          version: values[10],
+          bright_t31: parseFloat(values[11]) || 0,
+          frp: parseFloat(values[12]),
+          daynight: values[13],
+          type: parseInt(values[14]) || 0,
+          source: mapSourceName(source)
+        }
+      } else {
+        // VIIRS format
+        fire = {
+          latitude: parseFloat(values[0]),
+          longitude: parseFloat(values[1]),
+          brightness: parseFloat(values[2]), // bright_ti4
+          scan: parseFloat(values[3]),
+          track: parseFloat(values[4]),
+          acq_date: values[5],
+          acq_time: values[6],
+          satellite: values[7],
+          instrument: values[8],
+          confidence: parseFloat(values[9]) || 100, // VIIRS confidence or default
+          version: values[10],
+          bright_t31: parseFloat(values[11]) || 0, // bright_ti5
+          frp: parseFloat(values[12]),
+          daynight: values[13],
+          type: 0,
+          source: mapSourceName(source)
+        }
       }
+
 
       // Validate coordinates
       if (fire.latitude >= -90 && fire.latitude <= 90 && 

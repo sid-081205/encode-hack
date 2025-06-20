@@ -2,6 +2,126 @@
 
 A comprehensive Next.js web application for detecting, reporting, and predicting stubble burning fires using NASA FIRMS data and machine learning.
 
+## PROMPT:
+
+Stubble Burning Fire Detection & Prediction System - Development Instructions
+Build a comprehensive Next.js web application for detecting, reporting, and predicting stubble burning fires with multiple pages and interactive features.
+Core System Requirements:
+Fire Detection & Display:
+* Show all individual fire instances as small clickable indicators on interactive map
+* Display fire details popup when marker is clicked, including source satellite, timestamp, coordinates, confidence level, and fire characteristics
+* Avoid duplicate detections by checking for existing fires at same coordinates within 2-hour time window
+* Color-code markers by NASA FIRMS data source (MODIS - red, VIIRS - orange, other sources - different colors) (I have added the api key in the .env file)
+* Add an ability for users to enter and report a fire as well. 
+* Include legend showing what each marker color/source represents
+* Store all raw fire detections in PostgreSQL with source identification
+Multi-Page Application Structure:
+Page 1 - Fire Detection Map:
+* Interactive map with all current and historical fire markers
+* Click markers to see detailed fire information popup
+* Date range selector for filtering historical data
+* Region selector (Punjab, Haryana, or custom area drawing)
+* Fire reporting functionality with user-friendly form
+* Export capabilities for fire data
+* Real-time updates for new detections
+Page 2 - Fire Prediction Map:
+* Same interactive map interface with prediction overlays
+* Random Forest Regressor model for fire likelihood prediction
+* Show predicted fire-prone areas as heat map or probability zones
+* Time-based predictions (next 7 days, 15 days, 30 days)
+* Use historical data patterns, weather conditions, crop calendar, and seasonal trends
+* Make predictions specific to avoid overwhelming users with too many alerts
+* Include confidence levels for predictions
+* Allow users to select prediction time horizons
+Page 3 - Stubble Burning Impact Education:
+* Comprehensive information about environmental and health impacts
+* Air quality degradation statistics and visual representations
+* Health effects on rural and urban populations
+* Economic impacts on farmers and society
+* Climate change contributions and carbon emissions
+* Success stories of alternative practices
+* Government policies and regulations
+* Visual infographics and charts showing impact data
+* Before/after satellite imagery of affected regions
+Machine Learning Model Requirements:
+* Train Random Forest Regressor on historical fire data, weather patterns, crop cycles, and geographic features
+* Input features: historical fire density, temperature, humidity, wind patterns, crop harvest timing, district-wise agricultural data
+* Output: probability scores for fire occurrence in specific geographic grid cells
+* Implement model retraining pipeline with new data
+* Focus on high-confidence predictions to avoid false alarms
+* Include model performance metrics and accuracy indicators
+* Store predictions in database with timestamps and confidence scores
+Fire Reporting System:
+* User-friendly fire reporting form with location picker
+* Allow GPS-based location or map click selection
+* Include fire intensity estimation, smoke visibility, and estimated area
+* Photo upload capability for fire documentation
+* Integration with official reporting channels if applicable
+* Verification system for reported fires against satellite data
+* Community reporting features with user accounts
+Geographic Features:
+* Custom area selection with polygon drawing tools
+* Support for any geographic region within India
+* State and district boundary overlays
+* Agricultural area identification and highlighting
+* Zoom level restrictions to prevent application breaking (minimum zoom level set)
+* Efficient loading for large geographic areas
+* Coordinate display and search functionality
+Data Source Management:
+* Clear identification of NASA FIRMS data sources (MODIS, VIIRS, other satellites)
+* Source-specific styling and information display
+* Data quality indicators and confidence levels
+* Real-time data synchronization from multiple NASA FIRMS endpoints
+* Historical data completeness tracking by source
+* Source reliability and accuracy information
+User Experience Design:
+* Intuitive navigation between all three pages
+* Consistent map interface across detection and prediction pages
+* Mobile-responsive design for field use
+* Fast loading times even with large datasets
+* Clear visual hierarchy and information presentation
+* Accessibility features for diverse user base
+* Multi-language support consideration (English, Hindi, Punjabi)
+Technical Implementation:
+* PostgreSQL database with spatial indexing
+* Real-time data pipeline for NASA FIRMS integration
+* Machine learning model serving infrastructure
+* Efficient map rendering with marker clustering at high zoom levels
+* Background job processing for predictions and data updates
+* Caching strategies for frequently accessed data
+* API rate limiting and error handling
+Prediction Model Features:
+* Grid-based prediction system with specific geographic cells
+* Temporal predictions with specific date ranges
+* Integration with weather forecast APIs for improved accuracy
+* Agricultural calendar integration for crop burning seasons
+* Historical pattern analysis for seasonal trends
+* Risk level categorization (low, medium, high probability)
+* Prediction accuracy tracking and model improvement
+Map Performance Optimization:
+* Marker clustering for dense fire areas at lower zoom levels
+* Progressive loading of fire data based on zoom level and visible area
+* Maximum zoom out restriction to prevent performance issues
+* Efficient data fetching based on map bounds
+* Smooth pan and zoom interactions
+* Loading indicators for data-heavy operations
+Fire Reporting Workflow:
+* Simple form with essential fire details
+* Location verification against existing detections
+* Automatic notification system for new reports
+* Integration with local authorities if required
+* Report status tracking and updates
+* Community validation features
+Success Criteria:
+* Displays all fire instances clearly with source identification
+* Machine learning predictions are accurate and actionable
+* Educational content effectively communicates stubble burning impacts
+* Users can easily report fires and navigate between features
+* System performs well across different geographic scales
+* Predictions help users understand fire risk patterns
+* Application remains stable at all zoom levels
+* User-friendly interface accessible to diverse user base
+
 ## Features
 
 ### 🔥 Fire Detection
@@ -257,3 +377,4 @@ For support, please create an issue in the GitHub repository or contact the deve
 ---
 
 **Note**: This is a proof-of-concept application for educational and research purposes. For production use, additional validation, testing, and security measures are recommended.
+

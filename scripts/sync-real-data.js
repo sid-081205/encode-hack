@@ -39,25 +39,39 @@ async function fetchFireData(source, area, days = 7) {
       }
     })
 
+    console.log(`Response status: ${response.status}, Data length: ${response.data.length}`)
+    if (response.data.length < 100) {
+      console.log(`Raw response: ${response.data}`)
+    }
+
     return parseCSVData(response.data, source)
   } catch (error) {
     if (error.response?.status === 404) {
       console.log(`No ${source} data available for the specified area/time`)
       return []
     }
+    console.error(`API Error: ${error.message}`)
     throw error
   }
 }
 
 function parseCSVData(csvData, source) {
   const lines = csvData.trim().split('\n')
-  if (lines.length <= 1) return []
+  console.log(`Parsing ${lines.length} lines of data`)
+  
+  if (lines.length <= 1) {
+    console.log('No data lines found after header')
+    return []
+  }
 
   const fires = []
   
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(',')
-    if (values.length < 15) continue
+    if (values.length < 14) {
+      console.log(`Skipping line ${i}: only ${values.length} values`)
+      continue
+    }
 
     try {
       const fire = {
